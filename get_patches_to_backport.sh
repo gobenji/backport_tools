@@ -1,5 +1,6 @@
 #!/bin/bash
 SCRIPTPATH=$(cd `dirname "${BASH_SOURCE[0]}"` && pwd)
+. ${SCRIPTPATH}/config.sh
 
 shopt -s expand_aliases
 source ${SCRIPTPATH}/bashrc_addons.sh
