@@ -5,7 +5,7 @@ SCRIPTPATH=$(cd `dirname "${BASH_SOURCE[0]}"` && pwd)
 shopt -s expand_aliases
 source ${SCRIPTPATH}/bashrc_addons.sh
 set -e
-
+target_repo=$(pwd)
 fixes_only=0
 base_kver=
 rhel_rel=
@@ -83,16 +83,17 @@ esac
 
 if [ $fixes_only -eq 1 ]; then
 	echo "FIXES ONLY mode"
+	echo "RedHat Target repo path : "$target_repo
 	echo "Will not move to master branch."
 
 	case "${rhver}" in
 		7)
 			rm -rf /tmp/new_fixes_rh7
-			${SCRIPTPATH}/get_all_new_fixes.sh ${RHEL_7_TREE} ${rhel_tag} ${base_kver} /tmp/new_fixes_rh7
+			${SCRIPTPATH}/get_all_new_fixes.sh ${target_repo} ${rhel_tag} ${base_kver} /tmp/new_fixes_rh7
 			;;
 		8)
 			rm -rf /tmp/new_fixes_rh8
-			${SCRIPTPATH}/get_all_new_fixes.sh ${RHEL_8_TREE} ${rhel_tag} ${base_kver} /tmp/new_fixes_rh8
+			${SCRIPTPATH}/get_all_new_fixes.sh ${target_repo} ${rhel_tag} ${base_kver} /tmp/new_fixes_rh8
 			;;
 	esac
 
