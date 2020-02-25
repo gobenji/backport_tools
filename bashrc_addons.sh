@@ -69,15 +69,20 @@ function quilt_push_one()
 
 function quilt_refresh()
 {
+	local failed=0
 	for pp in $(quilt unapplied)
 	do
 		quilt push
 		if [ $? -ne 0 ] ; then
 			echo "-E- Failed to apply: $pp"
+			failed=1
 			break
 		fi
 		quilt refresh
 	done
+	if [ $failed -eq 1 ]; then
+		/usr/bin/false
+	fi
 }
 
 function git_apply_quilt_series()

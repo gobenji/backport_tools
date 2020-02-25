@@ -14,7 +14,7 @@ echo ""
 echo "-------------------------------------------------------------------"
 echo ""
 
-commit=$(quilt header | grep "^commit" | awk '{print $2}')
+commit=$(quilt header | grep "^commit" | awk '{print $2}' | sed -e 's/\r//g')
 if [ "X${commit}" == "X" ]; then
 	echo "Failed to get commit ID!!!" >&2
 	exit 1

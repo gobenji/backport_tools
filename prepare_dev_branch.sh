@@ -20,7 +20,7 @@ fi
 
 echo "Using: ${CNB_INFO}"
 echo
-read -p "This will OVERRIDE your current and master.<BZ #> branches, continue (y/n)?" choice
+read -p "This will OVERRIDE your current and master.${bznum} branches, continue (y/n)?" choice
 case "$choice" in
 	y*|Y*)
 		;;
