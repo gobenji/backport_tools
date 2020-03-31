@@ -16,18 +16,31 @@ echo "Using: ${PATCH_DIRS_LIST}"
 echo
 
 INC_BUILD_TEST=0
+RESOLVED=0
+
 if [ "X${1}" != "X" ]; then
-	read -p "Do you really want to test incremental build?" choice
-	case "$choice" in
-		y*|Y*)
-			INC_BUILD_TEST=1
+	case "${1}" in
+		inc)
+			read -p "Do you really want to test incremental build?" choice
+			case "$choice" in
+				y*|Y*)
+					INC_BUILD_TEST=1
+					;;
+				*)
+					echo "Aborted."
+					exit 0
+					;;
+			esac
+			echo
+			;;
+		resolved)
+			RESOLVED=1
 			;;
 		*)
-			echo "Aborted."
-			exit 0
+			echo "-E- Unsupported option: '${1}' !" >&2
+			exit 1
 			;;
 	esac
-	echo
 fi
 
 refresh_and_apply_series()
@@ -49,7 +62,7 @@ refresh_and_apply_series()
 }
 
 
-if [ $INC_BUILD_TEST -eq 0 ]; then
+if [ $INC_BUILD_TEST -eq 0 -a $RESOLVED -eq 0 ]; then
 	prepare_dev_branch.sh
 fi
 
@@ -69,12 +82,33 @@ do
 	# already ran this and had to fix some build issue.
 	cline_full=$(readlink -f ${cline})
 	current_patches_full=$(readlink -f patches)
-	if [ $INC_BUILD_TEST -eq 1 ] && [ "X${current_patches_full}" != "X" ] && [ $resume_started -eq 0 ]; then
+	if [ $INC_BUILD_TEST -eq 1 -o $RESOLVED -eq 1 ] && [ "X${current_patches_full}" != "X" ] && [ $resume_started -eq 0 ]; then
 		if [ "X${cline_full}" != "X${current_patches_full}" ]; then
 			continue
 		fi
 		echo "Resuming ..."
 		resume_started=1
+	fi
+
+	echo
+	echo "------------------------------------------------------"
+
+	if echo "${cline}" | grep -q "^SWITCH_BRANCH" ; then
+		git_branch=$(echo "${cline}" | sed -e 's/.*#//g')
+		if [ "X${git_branch}" == "X" ]; then
+			echo "Failed to get git_branch!" >&2
+			exit 1
+		fi
+
+		echo
+		echo "Switching to branch: ${git_branch}"
+		git checkout -B ${git_branch}
+
+		echo
+		echo "Setting current branch as master branch for: ${git_branch}"
+		set_master_branch.sh
+
+		continue
 	fi
 
 	echo "Working with: '${cline}'"
