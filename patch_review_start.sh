@@ -2,6 +2,12 @@
 set -ex
 
 curr_branch=$(git branch | grep "^* " | awk '{print $2}')
+base_branch=${1:-"master"}
+if [ "X${curr_branch}" != "X" -a "X${base_branch}" == "master" ]; then
+	if (git branch | grep -qw "master.${curr_branch}"); then
+		base_branch="master.${curr_branch}"
+	fi
+fi
 
 if [ "X${curr_branch}" == "Xreviewbranch" ]; then
 	echo "-I- You are already on review branch, will only run patchreview tool"
@@ -10,12 +16,6 @@ else
 
 	echo "${curr_branch}" > .orig_branch
 
-	base_branch="master"
-	if [ "X${curr_branch}" != "X" ]; then
-		if (git branch | grep -qw "master.${curr_branch}"); then
-			base_branch="master.${curr_branch}"
-		fi
-	fi
 
 	/bin/rm -rf toreview
 	git format-patch ${base_branch} -o toreview
