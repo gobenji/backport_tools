@@ -34,17 +34,39 @@ function quilt_pop_one
 function quilt_confirm_file_list()
 {
 	echo -e "\nVerifying that all rejected files are tracked by this quilt patch in order not to loose the fix..."
-	for ff in $(find . -name "*rej")
+
+	local missing_files=""
+	local lastpatch=$(quilt applied | tail -1)
+	for fname in $(cat patches/${lastpatch} | diffstat -K -q -l -p1)
 	do
-		fname=$(echo $ff | sed -e 's/.rej//g' -e 's/^\.\///g')
+		if [ ! -e "${fname}" ]; then
+			echo "WARNING: Patch wants to modify a MISSING file: '${fname}'" >&2
+			missing_files="${fname}\n${missing_files}"
+		fi
+	done
+
+	local reject_files=$(find . -name "*rej")
+	for ff in $reject_files
+	do
 		if ! (quilt files | grep -wq "${fname}"); then
 			echo "Adding missing file: $fname ..."
 			quilt add $fname
 		fi
 	done
-	echo -e "Done\n"
-	echo "Reject files to handle (once fixed, do 'quilt refresh'):"
-	find . -name "*rej"
+	echo "Done"
+	echo -e "Summary:\n"
+
+	if [ "X${reject_files}" != "X" ]; then
+		echo "Reject files to handle (once fixed, do 'quilt refresh'):" >&2
+		echo -e "${reject_files}" >&2
+	fi
+
+	if [ "X${missing_files}" != "X" ]; then
+		echo
+		echo "!!!!!!!!!! WARNING !!!!!!!!!!" >&2
+		echo "Patch wants to modify a MISSING files:" >&2
+		echo -e "${missing_files}" >&2
+	fi
 }
 
 function quilt_push()
