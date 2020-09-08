@@ -80,6 +80,28 @@ SEARCH_PATHS = {
         'drivers/net/ethernet/mellanox/mlxfw/',
     ],
 
+    'gpio-mlxbf': [
+        'drivers/gpio/gpio-mlxbf.c',
+    ],
+
+    'tmfifo': [
+        'drivers/platform/mellanox/mlxbf-tmfifo-regs.h',
+	'drivers/platform/mellanox/mlxbf-tmfifo.c',
+    ],
+
+    'ipmb-dev-int': [
+        'drivers/char/ipmi/ipmb_dev_int.c',
+    ],
+
+    'edac': [
+        'drivers/edac/bluefield_edac.c',
+    ],
+
+    'mlx-bootctl': [
+        'drivers/platform/mellanox/mlxbf-bootctl.c',
+        'drivers/platform/mellanox/mlxbf-bootctl.h',
+    ],
+
     'mm': [
         'include/linux/percpu.h',
         'mm/percpu-internal.h',

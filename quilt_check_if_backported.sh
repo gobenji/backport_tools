@@ -8,7 +8,7 @@ set -e
 echo "-------------------------------------------------------------------"
 echo "Working with:"
 echo ""
-quilt header
+env QUILT_PAGER="" quilt header
 echo ""
 echo "-------------------------------------------------------------------"
 echo ""
@@ -21,4 +21,4 @@ fi
 
 echo "Looking up commit $commit in git log ..."
 echo ""
-git log --grep $commit
+git --no-pager log --grep $commit

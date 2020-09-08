@@ -7,6 +7,8 @@ rhel_start_ref=$1; shift
 start_ref=$1; shift
 tdir=$1; shift
 
+drv_dirs=${drv_dirs:-"mlx4 mlx5"}
+
 BRANCHES="origin/master net-next/master net/master rdma/for-next rdma/for-rc"
 
 
@@ -51,7 +53,7 @@ do
 		-u ${start_ref}..${bb} \
 		--old_kernel_path . \
 		--upstream_kernel_path ${TREE} \
-		--dirs mlx4 mlx5 \
+		--dirs ${drv_dirs} \
 		--get_fixes \
 		| tee ${tdir}/${tfname}.txt
 done

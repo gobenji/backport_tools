@@ -20,7 +20,7 @@ fi
 
 echo "Using: ${CNB_INFO}"
 echo
-read -p "This will OVERRIDE your current and master.${bznum} branches, continue (y/n)?" choice
+read -p "This will OVERRIDE your current branch ${bznum} and master.${bznum} branch, continue (y/n)?" choice
 case "$choice" in
 	y*|Y*)
 		;;
@@ -87,6 +87,15 @@ do
 		echo "------------------------------------------------------"
 		echo "Applying patch: ${git_branch}"
 		git am --reject ${git_branch}
+		echo
+		continue
+	fi
+
+	if [ "X${git_url}" == "XAPPLY_PATCH_DIR" ]; then
+		echo
+		echo "------------------------------------------------------"
+		echo "Applying patches from folder: ${git_branch}"
+		git am --reject ${git_branch}/*patch
 		echo
 		continue
 	fi

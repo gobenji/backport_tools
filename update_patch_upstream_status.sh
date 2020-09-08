@@ -2,7 +2,7 @@
 SCRIPTPATH=$(cd `dirname "${BASH_SOURCE[0]}"` && pwd)
 . ${SCRIPTPATH}/config.sh
 
-FILES=$@
+FILES="$@"
 
 update_status_for_patch()
 {
@@ -26,7 +26,7 @@ update_status_for_patch()
 
 	cd ${TREE}
 	cid=$(echo ${ff} | sed -r -e 's@.*/@@g' | sed -r -e 's/.*-(.*).(diff|patch)/\1/g')
-	if !(git log -1 --oneline --decorate ${cid} &>/dev/null); then
+	if ! (git log -1 --oneline --decorate ${cid} &>/dev/null); then
 		cid=$(grep "^From " ${ff} | cut -d" " -f2)
 		if [ "X${cid}" == "X" ]; then
 			cid=$(grep "^commit " ${ff} | cut -d" " -f2)
@@ -36,23 +36,32 @@ update_status_for_patch()
 		fi
 		if [ "X${cid}" == "X" ]; then
 			echo "Failed to get commit ID of ${ff} !" >&2
-			exit 1
+			#exit 1
+			cd - &>/dev/null
+			return
 		fi
 		if !(git log -1 --oneline --decorate ${cid} &>/dev/null); then
 			echo "Commit ID of ${ff} is BAD!" >&2
-			exit 1
+			#exit 1
+			cd - &>/dev/null
+			return
 		fi
 	fi
 	cd - &>/dev/null
 
+	if [ "X${cid}" == "X" ]; then
+		echo "Failed to get commit ID of ${ff} !" >&2
+		return
+	fi
+
 	status=$(get_patch_upstream_status.sh ${cid})
-	if (echo "${status}" | grep -q "^Upstream: v"); then
+	if (echo "${status}" | grep -q "^Upstream: "); then
 		echo "Updating ${ff} to ${status}"
-		sed -ir -e "s/^Upstream: .*/${status}/" ${ff}
+		sed -ir -e "s@^Upstream: .*@${status}@" ${ff}
 		# remove bkp file
 		/bin/rm -fv ${ff}r
 	else
-		echo "No tag yet for this patch."
+		echo "Can't get upstream origin for this patch" >&2
 	fi
 }
 

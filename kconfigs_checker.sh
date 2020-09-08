@@ -111,7 +111,7 @@ function check_status_in_RHEL()
 	echo
 	for ii in $confs
 	do
-		echo "---------------------------------------------------------------"
+#		echo "---------------------------------------------------------------"
 		if ! git grep -w ${ii} ${branch} -- redhat/configs/ ; then
 			echo "-E- '${ii}' is not defined under ${branch}:redhat/configs/" >&2
 		fi

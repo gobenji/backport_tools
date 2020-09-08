@@ -13,7 +13,6 @@ fi
 
 status=$(git describe --contains $cid 2>/dev/null | sed -e 's/~.*//g')
 if [ "X${status}" == "X" ]; then
-	#status=$(git branch -r --contains $cid | grep -v HEAD | tail -1)
 	status=$(git branch -r --contains $cid | grep -v HEAD | head -1)
 else
 	case "$status" in
@@ -35,4 +34,17 @@ if [ "X${status}" == "X" ]; then
 fi
 
 status=$(echo $status | sed -e 's/\s//g')
+
+# display the repo URL instead of just its name
+case "$status" in
+	v*)
+		;;
+	*)
+		repo1=$(echo ${status} | sed -e 's/\/.*//g')
+		branch1=$(echo ${status} | sed -e 's/.*\///g')
+		repo1=$(git remote show ${repo1} | grep "Fetch URL:" | sed -e 's/.*URL: //g')
+		status="${repo1} , branch: ${branch1}"
+		;;
+esac
+
 echo "Upstream: ${status}"

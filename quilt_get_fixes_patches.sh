@@ -55,16 +55,29 @@ if [ "X${cids}" == "X" ]; then
 	for pp in $(grep "^[0-9]" ${pdir}/series)
 	do
 		#	echo "${pp}"
-		cid=$(echo ${pp} | sed -r -e 's/.*-(.*).(diff|patch)/\1/g')
-		cur_patch=$(git log -1 --oneline --decorate ${cid} 2>/dev/null) 
-		if [ "X${cur_patch}" == "X" ]; then
-			cid=$(grep "^From " ${pdir}/${pp} | cut -d" " -f2)
-			cur_patch=$(git log -1 --oneline --decorate ${cid} 2>/dev/null)
+		cid=
+		if echo "${pp}" | grep -Eq '^[0-9]+-[a-zA-Z0-9]+.(diff|patch)'; then
+			cid=$(echo ${pp} | sed -r -e 's/.*-(.*).(diff|patch)/\1/g')
 		fi
+		if [ "X${cid}" == "X" ]; then
+			cid=$(grep "imported from commit" ${pdir}/${pp} | sed -e 's/.*commit //g' -e 's/).*//g')
+		fi
+		if [ "X${cid}" == "X" ]; then
+			cid=$(grep "^commit " ${pdir}/${pp} | cut -d" " -f2)
+		fi
+		if [ "X${cid}" == "X" ]; then
+			cid=$(grep "^From " ${pdir}/${pp} | cut -d" " -f2)
+		fi
+		if [ "X${cid}" == "X" ]; then
+			echo "Failed to get commit ID of $pp (${subj}) !" >&2
+			continue
+		#	exit 1
+		fi
+		cur_patch=$(git log -1 --oneline --decorate ${cid} 2>/dev/null)
 		if [ "X${cur_patch}" == "X" ]; then
 			echo "-E- Failed to find '${cid}' in git log!" >&2
 			continue
-			exit 1
+		#	exit 1
 		fi
 		cid_short=$(git log -1 --format="%h" ${cid})
 		if !(echo -e "${cid_to_scan}" | grep -qw "${cid_short}"); then
@@ -102,7 +115,7 @@ do
 			fi
 		done
 	fi
-	
+
 	cur_patch_sub=$(git log -1 --format="%s" ${cid_short} 2>/dev/null)
 	fixes=$(git log --format="%h" -i --grep "fixes:.*${cur_patch_sub}" ${BRANCHES})
 	if [ "X${fixes}" != "X" ]; then
