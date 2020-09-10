@@ -162,17 +162,22 @@ function make_mlx_mods()
 	local flags=$1
 	local pids=""
 
-	make -j4 M=drivers/infiniband/core/ modules -s $flags &
+	local mods="modules"
+	if echo $flags | grep -qw clean ; then
+		mods=""
+	fi
+
+	make -j4 M=drivers/infiniband/core/ ${mods} -s $flags &
 	pids+=" $!"
-	make -j4 M=drivers/infiniband/hw/mlx5 modules -s $flags &
+	make -j4 M=drivers/infiniband/hw/mlx5 ${mods} -s $flags &
 	pids+=" $!"
-	make -j4 M=drivers/infiniband/hw/mlx4 modules -s $flags &
+	make -j4 M=drivers/infiniband/hw/mlx4 ${mods} -s $flags &
 	pids+=" $!"
-	make -j4 M=drivers/net/ethernet/mellanox/mlx4 modules -s $flags &
+	make -j4 M=drivers/net/ethernet/mellanox/mlx4 ${mods} -s $flags &
 	pids+=" $!"
-	make -j4 M=drivers/net/ethernet/mellanox/mlx5/core modules -s $flags &
+	make -j4 M=drivers/net/ethernet/mellanox/mlx5/core ${mods} -s $flags &
 	pids+=" $!"
-	make -j4 M=drivers/infiniband/ulp/ipoib modules -s $flags &
+	make -j4 M=drivers/infiniband/ulp/ipoib ${mods} -s $flags &
 	pids+=" $!"
 
 	failed=0
