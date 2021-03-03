@@ -29,13 +29,16 @@ else
 	cat > .data/patchreview.prj << EOF
 0
 1
+0
+0
+1
 1
 vimdiff
 toreview
 toreview_work
+false
 true
-true
-true
+10
 EOF
 fi
 

@@ -66,6 +66,10 @@ SEARCH_PATHS = {
         'drivers/net/ethernet/mellanox/Makefile',
     ],
 
+    'mlx5_vdpa': [
+        'drivers/vdpa/mlx5/',
+    ],
+
     'srp': [
         'drivers/infiniband/ulp/srp/',
         'include/scsi/srp.h',

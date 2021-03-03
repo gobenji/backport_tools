@@ -65,6 +65,8 @@ if [ "X${rhver}" == "X" ]; then
 	exit 1
 fi
 echo "Detected RHEL ${rhver} tree ..."
+echo "Make sure you are on the correct branch..."
+sleep 2
 
 case "${rhver}" in
 	7)
@@ -84,7 +86,6 @@ esac
 if [ $fixes_only -eq 1 ]; then
 	echo "FIXES ONLY mode"
 	echo "RedHat Target repo path : "$target_repo
-	echo "Will not move to master branch."
 
 	case "${rhver}" in
 		7)
@@ -117,8 +118,6 @@ git remote update
 
 cd $ORIG_DIR
 echo
-echo "Moving to master branch..."
-git checkout master
 
 mkdir -p ~/rh_backports/kernel/rhel${rhel_rel}/full_backport
 for drv in mlx4 mlx5
@@ -133,16 +132,37 @@ do
 		cd $ORIG_DIR
 		python ${SCRIPTPATH}/git-change-log -o ${rhel_tag}.. -u ${tag_start}..${tag_end} --old_kernel_path . --upstream_kernel_path ${TREE} --dirs ${drv} | tee ~/rh_backports/kernel/rhel${rhel_rel}/full_backport/git-change-log-${tag_end}.${drv}
 
-		cd ${TREE}
-		/bin/rm -rf ~/rh_backports/kernel/rhel${rhel_rel}/full_backport/patches-${kver}.${drv}
-		git-backport -q -b TODO_BZNUM -d ~/rh_backports/kernel/rhel${rhel_rel}/full_backport/patches-${kver}.${drv} -h ~/rh_backports/kernel/rhel${rhel_rel}/full_backport/git-change-log-${kver}.${drv}
+		if ! grep -vq "^#" ~/rh_backports/kernel/rhel${rhel_rel}/full_backport/git-change-log-${tag_end}.${drv} ; then
+			echo "No commits found for $drv: ${tag_start} --> ${tag_end} ."
+		else
+			cd ${TREE}
+			/bin/rm -rf ~/rh_backports/kernel/rhel${rhel_rel}/full_backport/patches-${kver}.${drv}
+			git-backport -q -b TODO_BZNUM -d ~/rh_backports/kernel/rhel${rhel_rel}/full_backport/patches-${kver}.${drv} -h ~/rh_backports/kernel/rhel${rhel_rel}/full_backport/git-change-log-${kver}.${drv}
+		fi
 
 		tag_start=$tag_end
 	done
 done
 
-/bin/rm -rf ~/rh_backports/kernel/rhel${rhel_rel}/full_backport.bkp
-/bin/cp -a ~/rh_backports/kernel/rhel${rhel_rel}/full_backport ~/rh_backports/kernel/rhel${rhel_rel}/full_backport.bkp
+
+mkbkp=1
+bkpdir=$(readlink -f ~/rh_backports/kernel/rhel${rhel_rel}/full_backport.bkp)
+if [ -e "${bkpdir}" ]; then
+	echo
+	read -p "Backup folder ${bkpdir} already exists, do you want to overrider it?" choice
+	case "$choice" in
+		y*|Y*)
+			;;
+		*)
+			mkbkp=0
+			echo "Skip backup creation."
+			;;
+	esac
+fi
+if [ $mkbkp -eq 1 ]; then
+	/bin/rm -rf ~/rh_backports/kernel/rhel${rhel_rel}/full_backport.bkp
+	/bin/cp -a ~/rh_backports/kernel/rhel${rhel_rel}/full_backport ~/rh_backports/kernel/rhel${rhel_rel}/full_backport.bkp
+fi
 
 echo
 echo "All at ~/rh_backports/kernel/rhel${rhel_rel}/full_backport"

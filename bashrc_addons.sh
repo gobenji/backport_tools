@@ -33,10 +33,18 @@ function quilt_pop_one
 
 function quilt_confirm_file_list()
 {
-	echo -e "\nVerifying that all rejected files are tracked by this quilt patch in order not to loose the fix..."
+	local no_verify=${1:-0}
+
+	if [ $no_verify -eq 0 ]; then
+		echo -e "\nVerifying that all rejected files are tracked by this quilt patch in order not to loose the fix..."
+	fi
 
 	local missing_files=""
 	local lastpatch=$(quilt applied | tail -1)
+	if [ "X${lastpatch}" == "X" ]; then
+		return
+	fi
+	echo "Current patch: ${lastpatch}"
 	for fname in $(cat patches/${lastpatch} | diffstat -K -q -l -p1)
 	do
 		if [ ! -e "${fname}" ]; then
@@ -46,14 +54,16 @@ function quilt_confirm_file_list()
 	done
 
 	local reject_files=$(find . -name "*rej")
-	for ff in $reject_files
-	do
-		if ! (quilt files | grep -wq "${fname}"); then
-			echo "Adding missing file: $fname ..."
-			quilt add $fname
-		fi
-	done
-	echo "Done"
+	if [ $no_verify -eq 0 ]; then
+		for ff in $reject_files
+		do
+			if ! (quilt files | grep -wq "${fname}"); then
+				echo "Adding missing file: $fname ..."
+				quilt add $fname
+			fi
+		done
+		echo "Done"
+	fi
 	echo -e "Summary:\n"
 
 	if [ "X${reject_files}" != "X" ]; then
@@ -87,6 +97,26 @@ function quilt_push_one()
 		quilt_confirm_file_list
 		/usr/bin/false
 	fi
+}
+
+function quilt_status()
+{
+	quilt_confirm_file_list 1
+}
+
+function quilt_add_conflicts_note()
+{
+	local lastpatch=$(quilt applied | tail -1)
+	if [ "X${lastpatch}" == "X" ]; then
+		return
+	fi
+	if grep -q "Conflicts:" patches/${lastpatch}; then
+		echo "Conflicts section was already added, will open for edit only"
+		sleep 1
+	else
+		sed '/Upstream:/r'<(show_conflicted_files) -i -- patches/${lastpatch}
+	fi
+	quilt header -e
 }
 
 function quilt_refresh()

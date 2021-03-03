@@ -120,7 +120,7 @@ do
 	git merge --log=1000 ${merge_with} --no-edit
 	if [ $? -ne 0 ]; then
 		# W/A rerere does not handle deleted file
-		for ff in $(git status | grep "deleted by us" | cut -d":" -f2)
+		for ff in $(git status | grep "deleted by" | cut -d":" -f2)
 		do
 			git rm ${ff}
 		done

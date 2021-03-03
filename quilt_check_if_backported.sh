@@ -21,4 +21,4 @@ fi
 
 echo "Looking up commit $commit in git log ..."
 echo ""
-git --no-pager log --grep $commit
+git --no-pager log -1 --grep $commit

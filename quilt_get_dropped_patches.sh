@@ -14,10 +14,9 @@ echo "Working with: ${pdir}"
 echo
 
 cd ${TREE}
-for pp in $(grep "^#[0-9]" ${pdir}/series)
+for pp in $(grep "^#.*patch" ${pdir}/series | sed -e 's/\s*//g')
 do
 	echo "${pp}"
 	cid=$(echo ${pp} | sed -r -e 's/#.*-(.*).(diff|patch)/\1/g')
 	git log -1 --oneline --decorate ${cid} 2>/dev/null || true
-	echo "----------------------------------------------"
 done
