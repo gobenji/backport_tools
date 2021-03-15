@@ -117,7 +117,7 @@ do
 			exit 1
 		fi
 	fi
-	git merge --log=1000 ${merge_with} --no-edit
+	git merge --signoff --log=1000 --no-edit ${merge_with}
 	if [ $? -ne 0 ]; then
 		# W/A rerere does not handle deleted file
 		for ff in $(git status | grep "deleted by" | cut -d":" -f2)
