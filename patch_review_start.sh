@@ -28,17 +28,22 @@ else
 	mkdir .data
 	cat > .data/patchreview.prj << EOF
 0
-1
+3
 0
 0
-1
+0
 1
 vimdiff
 toreview
 toreview_work
+2
+
+
+
+1
 false
-true
-10
+false
+17
 EOF
 fi
 

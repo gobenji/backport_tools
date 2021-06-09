@@ -34,6 +34,7 @@ function quilt_pop_one
 function quilt_confirm_file_list()
 {
 	local no_verify=${1:-0}
+	local got_issues=0
 
 	if [ $no_verify -eq 0 ]; then
 		echo -e "\nVerifying that all rejected files are tracked by this quilt patch in order not to loose the fix..."
@@ -48,6 +49,10 @@ function quilt_confirm_file_list()
 	for fname in $(cat patches/${lastpatch} | diffstat -K -q -l -p1)
 	do
 		if [ ! -e "${fname}" ]; then
+			# make sure it wasn't removed by this patch
+			if grep -A1 -- "--- a/${fname}" patches/${lastpatch} | grep -- "+++ /dev/null" &>/dev/null; then
+				continue
+			fi
 			echo "WARNING: Patch wants to modify a MISSING file: '${fname}'" >&2
 			missing_files="${fname}\n${missing_files}"
 		fi
@@ -67,8 +72,9 @@ function quilt_confirm_file_list()
 	echo -e "Summary:\n"
 
 	if [ "X${reject_files}" != "X" ]; then
-		echo "Reject files to handle (once fixed, do 'quilt refresh'):" >&2
+		echo "Reject files to handle:" >&2
 		echo -e "${reject_files}" >&2
+		got_issues=1
 	fi
 
 	if [ "X${missing_files}" != "X" ]; then
@@ -76,6 +82,14 @@ function quilt_confirm_file_list()
 		echo "!!!!!!!!!! WARNING !!!!!!!!!!" >&2
 		echo "Patch wants to modify a MISSING files:" >&2
 		echo -e "${missing_files}" >&2
+		got_issues=1
+	fi
+
+	if [ ${got_issues} -eq 1 ]; then
+		echo "" >&2
+		echo "After handling all isssues, run:" >&2
+		echo "1. quilt refresh" >&2
+		echo "2. quilt_add_conflicts_note" >&2
 	fi
 }
 
@@ -84,6 +98,7 @@ function quilt_push()
 	_clean_rej
 	quilt push -af
 	if [ $? -ne 0 ]; then
+		timeout 4 quilt_check_if_backported.sh
 		quilt_confirm_file_list
 		/usr/bin/false
 	fi
@@ -94,6 +109,7 @@ function quilt_push_one()
 	_clean_rej
 	quilt push -f
 	if [ $? -ne 0 ]; then
+		timeout 4  quilt_check_if_backported.sh
 		quilt_confirm_file_list
 		/usr/bin/false
 	fi

@@ -47,11 +47,18 @@ if (git branch -r | grep -q rhel-8.0); then
 	fi
 	git reset --hard ${base}
 else
-	base=$(grep "^BASE" ${CNB_INFO} | sed -e 's/.*#//g')
+	base=$(grep "^BASE" ${CNB_INFO} | sed -e 's/^BASE#//g')
 	if [ "X${base}" == "X" ]; then
 		git reset --hard origin/master
 	else
-		git reset --hard ${base}
+		if echo "${base}" | grep -q "#" ; then
+			git_url=$(echo "${base}" | sed -e 's/#.*//g')
+			git_branch=$(echo "${base}" | sed -e 's/.*#//g')
+			git fetch ${git_url} ${git_branch}
+			git reset --hard FETCH_HEAD
+		else
+			git reset --hard ${base}
+		fi
 	fi
 fi
 
