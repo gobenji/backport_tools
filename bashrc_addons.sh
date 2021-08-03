@@ -46,6 +46,7 @@ function quilt_confirm_file_list()
 		return
 	fi
 	echo "Current patch: ${lastpatch}"
+	grep "Subject: " patches/${lastpatch}
 	for fname in $(cat patches/${lastpatch} | diffstat -K -q -l -p1)
 	do
 		if [ ! -e "${fname}" ]; then
@@ -60,7 +61,7 @@ function quilt_confirm_file_list()
 
 	local reject_files=$(find . -name "*rej")
 	if [ $no_verify -eq 0 ]; then
-		for ff in $reject_files
+		for fname in $reject_files
 		do
 			if ! (quilt files | grep -wq "${fname}"); then
 				echo "Adding missing file: $fname ..."
@@ -163,6 +164,12 @@ function git_apply_quilt_series()
 			break
 		fi
 	done
+}
+
+function quilt_refresh_and_apply_with_git()
+{
+	quilt_pop
+	quilt_refresh && quilt_pop && git_apply_quilt_series
 }
 
 function set_patches_link()
