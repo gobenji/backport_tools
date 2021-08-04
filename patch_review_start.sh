@@ -45,6 +45,28 @@ false
 false
 17
 EOF
+
+	cat > .data/patchreview.conf << EOF
+menumode         = 0
+patchvalfuzz     = 3
+patchseekmode    = 0
+applyfailmode    = 0
+applymode        = 0
+cmpmode          = 1
+editor           = vimdiff
+indir            = toreview
+outdir           = toreview_work
+background       = 2
+remote_repo      = origin
+remote_branch    = 
+mergelist_filter =
+opmode           = 1
+b_rename_infiles = false
+b_fmt_upstream   = false
+b_verbose        = true
+b_mrcomments     = true
+EOF
+
 fi
 
 patchreview
