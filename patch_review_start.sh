@@ -19,7 +19,7 @@ else
 
 	/bin/rm -rf toreview
 	git format-patch ${base_branch} -o toreview
-	git co ${base_branch} -B reviewbranch
+	git checkout ${base_branch} -B reviewbranch
 
 	/bin/rm -rf toreview_work
 	mkdir toreview_work
