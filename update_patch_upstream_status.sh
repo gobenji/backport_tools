@@ -15,12 +15,12 @@ update_status_for_patch()
 		exit 1
 	fi
 
-	if (grep -q "^Upstream: v" ${ff}); then
+	if (grep -q "^Upstream-status: v" ${ff}); then
 		echo "already updated, skipping..."
 		return
 	fi
-	if !(grep -q "^Upstream: " ${ff}); then
-		echo "Missing 'Upstream:' tag, skipping..."
+	if !(grep -q "^Upstream-status: " ${ff}); then
+		echo "Missing 'Upstream-status:' tag, skipping..."
 		return
 	fi
 
@@ -55,9 +55,9 @@ update_status_for_patch()
 	fi
 
 	status=$(get_patch_upstream_status.sh ${cid})
-	if (echo "${status}" | grep -q "^Upstream: "); then
+	if (echo "${status}" | grep -q "^Upstream-status: "); then
 		echo "Updating ${ff} to ${status}"
-		sed -ir -e "s@^Upstream: .*@${status}@" ${ff}
+		sed -ir -e "s@^Upstream-status: .*@${status}@" ${ff}
 		# remove bkp file
 		/bin/rm -fv ${ff}r
 	else

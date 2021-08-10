@@ -131,7 +131,7 @@ function quilt_add_conflicts_note()
 		echo "Conflicts section was already added, will open for edit only"
 		sleep 1
 	else
-		sed '/Upstream:/r'<(show_conflicted_files) -i -- patches/${lastpatch}
+		sed '/Upstream-status:/r'<(show_conflicted_files) -i -- patches/${lastpatch}
 	fi
 	quilt header -e
 }

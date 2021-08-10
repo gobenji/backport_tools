@@ -47,4 +47,4 @@ case "$status" in
 		;;
 esac
 
-echo "Upstream: ${status}"
+echo "Upstream-status: ${status}"
