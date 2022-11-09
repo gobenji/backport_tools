@@ -247,7 +247,7 @@ function make_mlx_mods()
 	fi
 }
 
-alias config_and_prep='make rh-configs && /bin/cp -f redhat/configs/*$(uname -m).config .config && adjust_config_file && make olddefconfig && make modules_prepare'
+alias config_and_prep='make dist-configs && /bin/cp -f redhat/configs/*$(uname -m).config .config && adjust_config_file && make olddefconfig && make modules_prepare'
 alias config_and_make='config_and_prep && make -j50 -s'
-alias make_mlx_mods_Werror='make_mlx_mods KCFLAGS=-Werror'
+alias make_mlx_mods_Werror='make_mlx_mods '
 alias make_mlx_mods_clean='make_mlx_mods clean'
