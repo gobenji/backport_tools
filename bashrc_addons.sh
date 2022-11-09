@@ -97,7 +97,7 @@ function quilt_confirm_file_list()
 function quilt_push()
 {
 	_clean_rej
-	quilt push -af
+	quilt push --fuzz=0 -af
 	if [ $? -ne 0 ]; then
 		timeout 4 quilt_check_if_backported.sh
 		quilt_confirm_file_list
@@ -108,7 +108,7 @@ function quilt_push()
 function quilt_push_one()
 {
 	_clean_rej
-	quilt push -f
+	quilt push --fuzz=0 -f
 	if [ $? -ne 0 ]; then
 		timeout 4  quilt_check_if_backported.sh
 		quilt_confirm_file_list
