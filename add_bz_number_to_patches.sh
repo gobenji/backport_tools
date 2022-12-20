@@ -8,7 +8,7 @@ if [ "X${BZNUM}" == "X" ]; then
 	exit 1
 fi
 
-BZNUM="Bugzilla: http://bugzilla.redhat.com/${BZNUM}"
+BZNUM="Bugzilla: https://bugzilla.redhat.com/${BZNUM}"
 
 append_bznum_to_file()
 {
