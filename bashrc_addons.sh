@@ -249,6 +249,42 @@ function set_backup_link()
 	echo ""
 }
 
+function print_non_mlx_commits()
+{
+	BRANCH=$(git branch --show-current)
+	declare -i cmd_res
+
+	if [ -z $BRANCH ]
+	then
+		echo "Please checkout a branch"
+		return
+	fi
+
+	git branch | grep --silent -e master\.$BRANCH
+	cmd_res=$?
+	if [ $cmd_res -ne 0 ]
+	then
+		echo "There is no master branch"
+		return
+	fi
+
+	HASHES=$(git log --pretty="format:%h" master.$BRANCH..$BRANCH)
+
+	echo "Patches which touches non mlx files"
+	echo "-------------------------------------------------------------"
+	for hash in $HASHES
+	do
+		git log -1 --name-only --pretty="format:"  $hash| grep --silent -v mlx
+		cmd_res=$?
+		if [ $cmd_res -eq 0 ]
+		then
+			git log --oneline -1 $hash
+			git log -1 --name-only --pretty="format:"  $hash| grep -v mlx
+			echo "-----------------------------------"
+		fi
+	done
+}
+
 function adjust_config_file()
 {
 	set -x
