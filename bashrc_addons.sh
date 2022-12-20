@@ -116,6 +116,33 @@ function quilt_push_one()
 	fi
 }
 
+function quilt_push_until()
+{
+	local target=$1
+	declare -i retval=0
+
+	if [[ -z $target ]]
+	then
+		echo "PLEASE PROVIDE TEGET COMMIT !!!!"
+		return 1
+	fi
+
+	#check if target is in series file
+	grep --silent --fixed-string --regexp=$target patches/series
+	retVal=$?
+	if [ $retVal -ne 0 ]; then
+		echo "ERROR: target is not in series file !!!"
+		return $retVal
+	fi
+
+	echo "pop_all"
+	quilt_pop > /dev/null
+	while [ "$(quilt top)" != "$target" ]
+	do
+		quilt_push_one
+	done
+}
+
 function quilt_status()
 {
 	quilt_confirm_file_list 1
