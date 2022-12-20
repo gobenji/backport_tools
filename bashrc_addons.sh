@@ -224,6 +224,31 @@ function set_patches_link()
 	echo ""
 }
 
+function set_backup_link()
+{
+	if [ "X${1}" == "X" ]; then
+		echo "Path not provided !" >&2
+		return
+	fi
+	if [ ! -e "$1" ]; then
+		echo "$1 does not exist !" >&2
+		return
+	fi
+	if [ -L "bkp" ]; then
+		echo "Removing existing link"
+		ls -l bkp
+		unlink bkp
+	fi
+	if [ -e "bkp" ]; then
+		echo "bkp exists and it's not a link !" >&2
+		return
+	fi
+	echo ""
+	echo "Creating link bkp -> $1"
+	ln -s $1 bkp
+	echo ""
+}
+
 function adjust_config_file()
 {
 	set -x
