@@ -48,7 +48,7 @@ do
 	echo "Getting fixes from ${bb} ..."
 	tfname=$(branch_to_fname ${bb})
 
-	python ${SCRIPTPATH}/git-change-log \
+	python3 ${SCRIPTPATH}/git-change-log \
 		-o ${rhel_start_ref}.. \
 		-u ${start_ref}..${bb} \
 		--old_kernel_path . \

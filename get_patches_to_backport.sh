@@ -138,7 +138,7 @@ do
 		echo "Getting $drv patches from kernels ${tag_start} --> ${tag_end}"
 
 		cd $ORIG_DIR
-		python ${SCRIPTPATH}/git-change-log -o ${rhel_tag}.. -u ${tag_start}..${tag_end} --old_kernel_path . --upstream_kernel_path ${TREE} --dirs ${drv} | tee ~/rh_backports/kernel/rhel${rhel_rel}/full_backport/git-change-log-${tag_end}.${drv}
+		python3 ${SCRIPTPATH}/git-change-log -o ${rhel_tag}.. -u ${tag_start}..${tag_end} --old_kernel_path . --upstream_kernel_path ${TREE} --dirs ${drv} | tee ~/rh_backports/kernel/rhel${rhel_rel}/full_backport/git-change-log-${tag_end}.${drv}
 
 		if ! grep -vq "^#" ~/rh_backports/kernel/rhel${rhel_rel}/full_backport/git-change-log-${tag_end}.${drv} ; then
 			echo "No commits found for $drv: ${tag_start} --> ${tag_end} ."

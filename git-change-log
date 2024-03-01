@@ -32,13 +32,10 @@ import re
 import sys
 from argparse import ArgumentParser
 
-reload(sys)
-sys.setdefaultencoding('utf-8')
-
 try:
     from git import Repo
 except ImportError:
-    print "Please Install GitPython Package (e.g. yum install GitPython)"
+    print("Please Install GitPython Package (e.g. yum install GitPython)")
     sys.exit(1)
 
 SEARCH_PATHS = {
@@ -193,7 +190,7 @@ class git_change_log(object):
 
                 if match:
                     if self.debug:
-                        print "Found included:", commit
+                        print("Found included:", commit)
                     ignore = False
                     for msg in IGNORE_COMMITS:
                         if msg in commit.message:
@@ -213,7 +210,7 @@ class git_change_log(object):
                     self.included_commits_set.add(upstream_commit.hexsha)
                 else:
                     if self.debug:
-                        print "Not found:", commit
+                        print("Not found:", commit)
 
 
         return self.included_commits_set
@@ -253,7 +250,7 @@ class git_change_log(object):
 
                 self.upstream_commits_set.add(commit.hexsha)
                 if self.debug:
-                    print "Found upstream:", commit.hexsha
+                    print("Found upstream:", commit.hexsha)
 
         return self.upstream_commits_set
 
@@ -261,14 +258,14 @@ class git_change_log(object):
 
         not_inclueded_commits = self.UpstreamCommits - self.IncludedCommits
         old_kernel_curr_branch = self.OldRepo.active_branch
-        print "# old_kernel_curr_branch: ", old_kernel_curr_branch
+        print("# old_kernel_curr_branch: ", old_kernel_curr_branch)
 
         for commit in self.UpstreamRepo.iter_commits(self.upstream_range, paths=self.MLX_PATHS, no_merges=True,
                                                      reverse=True):
             commit_hash = commit.hexsha
 
             skip = False
-	    note = None
+            note = None
             if self.get_fixes:
                 match = None
                 for regx in FIXES_RGEX_LIST:
@@ -289,8 +286,8 @@ class git_change_log(object):
                                 tmp = tmp_proc.communicate()[0]
                                 if (tmp_proc.returncode == 0):
                                         found_offending_in_git_log = True
-                            except Exception, ex:
-                                print ex
+                            except Exception as ex:
+                                print(ex)
                                 pass
                             if found_offending_in_git_log:
                                     break
@@ -329,9 +326,9 @@ class git_change_log(object):
                         break
 
                 if note is not None:
-                    print note
+                    print(note)
 
-                print msg
+                print(msg)
 
     def build_mlx_paths(self):
         self.MLX_PATHS = []
