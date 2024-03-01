@@ -47,20 +47,23 @@ SEARCH_PATHS = {
     ],
 
     'mlx4': [
-        'drivers/net/mlx4/',
-        'include/linux/mlx4/',
+        'Documentation/networking/devlink/mlx4.rst',
         'drivers/infiniband/hw/mlx4/',
         'drivers/net/ethernet/mellanox/mlx4/',
+        'drivers/net/mlx4/',
+        'include/linux/mlx4/',
     ],
 
     'mlx5': [
+        'Documentation/networking/device_drivers/ethernet/mellanox/mlx5/',
+        'Documentation/networking/devlink/mlx5.rst',
+        'drivers/infiniband/hw/mlx5/',
+        'drivers/net/ethernet/mellanox/Kconfig',
+        'drivers/net/ethernet/mellanox/Makefile',
+        'drivers/net/ethernet/mellanox/mlx5/',
         'drivers/net/mlx5/',
         'include/linux/mlx5/',
         'include/linux/net_dim.h',
-        'drivers/infiniband/hw/mlx5/',
-        'drivers/net/ethernet/mellanox/mlx5/',
-        'drivers/net/ethernet/mellanox/Kconfig',
-        'drivers/net/ethernet/mellanox/Makefile',
     ],
 
     'mlx5_vdpa': [
