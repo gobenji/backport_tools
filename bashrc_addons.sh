@@ -193,6 +193,21 @@ function git_apply_quilt_series()
 	done
 }
 
+function git_apply_patches_from_file()
+{
+	FILE=$1
+	while read line
+	do
+		echo $line
+		git am --signoff patches/$line
+		if [ $? -ne 0 ] || [ -e ".git/rebase-apply" ]; then
+			echo "-E- Failed to apply: $line"
+			break
+		fi
+		echo "---------------------------"
+	done < $FILE
+}
+
 function quilt_refresh_and_apply_with_git()
 {
 	quilt_pop
@@ -247,6 +262,11 @@ function set_backup_link()
 	echo "Creating link bkp -> $1"
 	ln -s $1 bkp
 	echo ""
+}
+
+function quilt_top ()
+{
+	quilt top | awk --field-separator "[-.]" '{print $2}'
 }
 
 function print_non_mlx_commits()
@@ -308,6 +328,8 @@ function make_mlx_mods()
 		mods=""
 	fi
 
+	echo $flags
+	echo "-------------------"
 	make -j4 M=drivers/infiniband/core/ ${mods} -s $flags &
 	pids+=" $!"
 	make -j4 M=drivers/infiniband/hw/mlx5 ${mods} -s $flags &

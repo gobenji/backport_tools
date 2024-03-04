@@ -25,7 +25,8 @@ function build
 
 echo "Checking that current tree state can compile before applying patches..."
 /bin/rm -f .config*
-config_and_prep
+#config_and_prep
+make -C redhat rh-configs && /bin/cp -f redhat/configs/*$(uname -m).config .config && adjust_config_file && make olddefconfig && make modules_prepare
 build "$(quilt applied 2>&1 | tail -1)"
 
 # use unapplied instead of series to support resuming

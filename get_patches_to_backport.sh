@@ -77,6 +77,10 @@ case "${rhver}" in
 		[ "X${base_kver}" == "X" ] && base_kver='v4.18'
 		rhel_tag='v4.18'
 		;;
+	9)
+		[ "X${base_kver}" == "X" ] && base_kver='v5.14'
+		rhel_tag='v5.14'
+		;;
 	*)
 		echo "Unsupported RHEL version $rhver !" >&2
 		exit 1
@@ -95,6 +99,10 @@ if [ $fixes_only -eq 1 ]; then
 		8)
 			rm -rf /tmp/new_fixes_rh8
 			${SCRIPTPATH}/get_all_new_fixes.sh ${target_repo} ${rhel_tag} ${base_kver} /tmp/new_fixes_rh8
+			;;
+		9)
+			rm -rf /tmp/new_fixes_rh9
+			${SCRIPTPATH}/get_all_new_fixes.sh ${target_repo} ${rhel_tag} ${base_kver} /tmp/new_fixes_rh9
 			;;
 	esac
 
