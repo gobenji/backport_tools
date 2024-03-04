@@ -118,7 +118,7 @@ function check_status_in_RHEL()
 	done
 }
 
-if [[ "X"${old_branch}" == "X" -o "X"${new_branch}" == "X" ]]; then
+if [[ -z $old_branch || -z $new_branch ]]; then
 	echo "-E- missing old_branch or new_branch" >&2
 	exit 1
 fi
