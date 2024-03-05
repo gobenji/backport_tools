@@ -9,7 +9,7 @@ tdir=$1; shift
 
 drv_dirs=${drv_dirs:-"mlx4 mlx5"}
 
-BRANCHES="origin/master net-next/master net/master rdma/for-next rdma/for-rc"
+BRANCHES="origin/master net-next/main net/main rdma/for-next rdma/for-rc"
 
 
 if [ ! -e "${rhel_tree}" ]; then

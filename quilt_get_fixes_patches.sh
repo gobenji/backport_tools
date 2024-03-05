@@ -6,7 +6,7 @@ pdir=${1:-patches}
 cids=${cids:-""}
 
 #BRANCHES=${BRANCHES:-"origin/master net-next/master net/master rdma/for-next rdma/for-rc i2c/i2c/for-current i2c/i2c/for-next"}
-BRANCHES=${BRANCHES:-"origin/master net-next/master net/master rdma/for-next rdma/for-rc"}
+BRANCHES=${BRANCHES:-"origin/master net-next/main net/main rdma/for-next rdma/for-rc"}
 #
 # Expected branches configured at your upstream linux git tree
 #
