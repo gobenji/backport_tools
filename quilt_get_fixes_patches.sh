@@ -106,7 +106,7 @@ for cid_short in ${cid_to_scan}
 do
 #	echo "${pp}"
 	cur_patch=$(git log -1 --oneline --decorate ${cid_short} 2>/dev/null)
-	fixes=$(git log --format="%h" -i --grep "fixes:.*${cid_short}" ${BRANCHES})
+	fixes=$(git log --format="%h" -i --grep "fixes:.*${cid_short}" ${BRANCHES} ^$cid_short)
 	fixes_missing=
 	if [ "X${fixes}" != "X" ]; then
 		for cid in ${fixes}
@@ -118,7 +118,7 @@ do
 	fi
 
 	cur_patch_sub=$(git log -1 --format="%s" ${cid_short} 2>/dev/null)
-	fixes=$(git log --format="%h" -i --grep "fixes:.*${cur_patch_sub}" ${BRANCHES})
+	fixes=$(git log --format="%h" -i --grep "fixes:.*${cur_patch_sub}" ${BRANCHES} ^$cid_short)
 	if [ "X${fixes}" != "X" ]; then
 		for cid in ${fixes}
 		do
