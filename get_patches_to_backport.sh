@@ -127,7 +127,7 @@ git remote update
 cd $ORIG_DIR
 echo
 
-mkdir -p ~/rh_backports/kernel/rhel${rhel_rel}/full_backport
+mkdir -p /tmp/rh_backports/rhel${rhel_rel}/full_backport
 for drv in mlx4 mlx5
 do
 	tag_start=$base_kver
@@ -138,14 +138,14 @@ do
 		echo "Getting $drv patches from kernels ${tag_start} --> ${tag_end}"
 
 		cd $ORIG_DIR
-		python3 ${SCRIPTPATH}/git-change-log -o ${rhel_tag}.. -u ${tag_start}..${tag_end} --old_kernel_path . --upstream_kernel_path ${TREE} --dirs ${drv} | tee ~/rh_backports/kernel/rhel${rhel_rel}/full_backport/git-change-log-${tag_end}.${drv}
+		python3 ${SCRIPTPATH}/git-change-log -o ${rhel_tag}.. -u ${tag_start}..${tag_end} --old_kernel_path . --upstream_kernel_path ${TREE} --dirs ${drv} | tee /tmp/rh_backports/rhel${rhel_rel}/full_backport/git-change-log-${tag_end}.${drv}
 
-		if ! grep -vq "^#" ~/rh_backports/kernel/rhel${rhel_rel}/full_backport/git-change-log-${tag_end}.${drv} ; then
+		if ! grep -vq "^#" /tmp/rh_backports/rhel${rhel_rel}/full_backport/git-change-log-${tag_end}.${drv} ; then
 			echo "No commits found for $drv: ${tag_start} --> ${tag_end} ."
 		else
 			cd ${TREE}
-			/bin/rm -rf ~/rh_backports/kernel/rhel${rhel_rel}/full_backport/patches-${kver}.${drv}
-			git-backport -q -b TODO_BZNUM -d ~/rh_backports/kernel/rhel${rhel_rel}/full_backport/patches-${kver}.${drv} -h ~/rh_backports/kernel/rhel${rhel_rel}/full_backport/git-change-log-${kver}.${drv}
+			/bin/rm -rf /tmp/rh_backports/rhel${rhel_rel}/full_backport/patches-${kver}.${drv}
+			git-backport -q -b TODO_BZNUM -d /tmp/rh_backports/rhel${rhel_rel}/full_backport/patches-${kver}.${drv} -h /tmp/rh_backports/rhel${rhel_rel}/full_backport/git-change-log-${kver}.${drv}
 		fi
 
 		tag_start=$tag_end
@@ -154,7 +154,7 @@ done
 
 
 mkbkp=1
-bkpdir=$(readlink -f ~/rh_backports/kernel/rhel${rhel_rel}/full_backport.bkp)
+bkpdir=$(readlink -f /tmp/rh_backports/rhel${rhel_rel}/full_backport.bkp)
 if [ -e "${bkpdir}" ]; then
 	echo
 	read -p "Backup folder ${bkpdir} already exists, do you want to overrider it?" choice
@@ -168,10 +168,10 @@ if [ -e "${bkpdir}" ]; then
 	esac
 fi
 if [ $mkbkp -eq 1 ]; then
-	/bin/rm -rf ~/rh_backports/kernel/rhel${rhel_rel}/full_backport.bkp
-	/bin/cp -a ~/rh_backports/kernel/rhel${rhel_rel}/full_backport ~/rh_backports/kernel/rhel${rhel_rel}/full_backport.bkp
+	/bin/rm -rf /tmp/rh_backports/rhel${rhel_rel}/full_backport.bkp
+	/bin/cp -a /tmp/rh_backports/rhel${rhel_rel}/full_backport /tmp/rh_backports/rhel${rhel_rel}/full_backport.bkp
 fi
 
 echo
-echo "All at ~/rh_backports/kernel/rhel${rhel_rel}/full_backport"
+echo "All at /tmp/rh_backports/rhel${rhel_rel}/full_backport"
 
