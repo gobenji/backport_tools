@@ -259,7 +259,7 @@ class git_change_log(object):
 
     def get_not_included_commits(self):
 
-        not_inclueded_commits = self.UpstreamCommits - self.IncludedCommits
+        not_included_commits = self.UpstreamCommits - self.IncludedCommits
         old_kernel_curr_branch = self.OldRepo.active_branch
         print("# old_kernel_curr_branch: ", old_kernel_curr_branch)
 
@@ -314,7 +314,7 @@ class git_change_log(object):
             if skip:
                 continue
 
-            if commit_hash in not_inclueded_commits:
+            if commit_hash in not_included_commits:
                 msg = "%s # %s" % (commit_hash, commit.summary)
 
                 for c_f in commit.stats.files:
