@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -e
 SCRIPTPATH=$(cd `dirname "${BASH_SOURCE[0]}"` && pwd)
 . ${SCRIPTPATH}/config.sh
 
