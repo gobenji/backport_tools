@@ -184,7 +184,7 @@ class git_change_log(object):
         if not hasattr(self, 'included_commits_set'):
             self.included_commits_set = set()
 
-            for commit in self.OldRepo.iter_commits(self.old_range, paths=self.MLX_PATHS):
+            for commit in self.OldRepo.iter_commits(self.old_range):
                 match = None
                 for regex in PICK_RGEX_LIST:
                     match = re.search(regex, commit.message)
