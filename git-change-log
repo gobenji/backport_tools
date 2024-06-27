@@ -126,7 +126,8 @@ PICK_RGEX_LIST = [
     "Upstream commit ([0-9a-f]+)",
     "upstream: ([0-9a-f]+)",
     "Upstream: ([0-9a-f]+)",
-    "commit (([0-9a-f]+){10})",
+    "commit ([0-9a-f]{40})",
+    "commit ([0-9a-f]+)",
     "Commit ([0-9a-f]+)"
 ]
 
@@ -193,7 +194,7 @@ class git_change_log(object):
 
                 if match:
                     if self.debug:
-                        print("Found included:", commit)
+                        print(f"Found included: {commit} backports {match.group(1)}")
                     ignore = False
                     for msg in IGNORE_COMMITS:
                         if msg in commit.message:
