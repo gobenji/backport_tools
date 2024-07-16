@@ -144,7 +144,7 @@ IGNORE_COMMITS = [
 IGNORE_UPSTREAM_COMMITS = [
 ]
 
-STABLE_REGEX = "\[ Upstream commit ([0-9a-f]+) \]"
+STABLE_REGEX = r"\[ Upstream commit ([0-9a-f]+) \]"
 
 FIXES_RGEX_LIST = [
     "Fixes: ([0-9a-f]+)",
